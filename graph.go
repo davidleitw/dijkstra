@@ -10,8 +10,16 @@ func NewGraph() *Graph {
 	}
 }
 
-func (g *Graph) AddNewVertex() {
-
+func (g *Graph) AddNewVertex(ID string) *Vertex {
+	for _, ver := range g.Vertices {
+		if ver.ID == ID {
+			// mean this vertex already exist.
+			return &ver
+		}
+	}
+	v := NewVertex(ID)
+	g.Vertices = append(g.Vertices, v)
+	return &v
 }
 
 func (g *Graph) AddVertex(v Vertex) *Vertex {
@@ -23,4 +31,13 @@ func (g *Graph) AddVertex(v Vertex) *Vertex {
 	}
 	g.Vertices = append(g.Vertices, v)
 	return &v
+}
+
+func (g *Graph) GetVertex(ID string) *Vertex {
+	for _, ver := range g.Vertices {
+		if ver.ID == ID {
+			return &ver
+		}
+	}
+	return nil
 }

@@ -6,8 +6,8 @@ type Vertex struct {
 	weights map[string]int64
 }
 
-func NewVertex(ID string) *Vertex {
-	return &Vertex{
+func NewVertex(ID string) Vertex {
+	return Vertex{
 		ID:      ID,
 		weights: map[string]int64{},
 	}
