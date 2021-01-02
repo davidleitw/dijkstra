@@ -30,7 +30,7 @@ func TestAddVertex(t *testing.T) {
 		t.Error("vertex ID error.")
 	}
 
-	v3 := NewVertex("test2")
+	v3, _ := NewVertex(SetID("test2"), SetNumber(1))
 	graph.AddVertex(v3)
 	v4 := graph.GetVertex("test2")
 	if v4 == nil || v4.ID != v3.ID {
