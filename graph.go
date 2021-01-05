@@ -1,28 +1,31 @@
 package dijkstra
 
-import (
-	"errors"
-)
+import "errors"
 
 type Graph struct {
-	Vertices []*Vertex
-	Vns      []int // vertex number array
-	table    map[int]map[int]int64
+	Vertices        []*Vertex
+	table           [][]info
+	conversionTable map[int]string
+}
+
+type info struct {
+	distance int64
+	path     string
 }
 
 func NewGraph() *Graph {
 	return &Graph{
-		Vertices: []*Vertex{},
-		Vns:      []int{},
-		table:    map[int]map[int]int64{},
+		Vertices:        []*Vertex{},
+		table:           [][]info{},
+		conversionTable: map[int]string{},
 	}
 }
 
 func (g *Graph) AddNewVertex(ID string) *Vertex {
-	for _, ver := range g.Vertices {
-		if ver.ID == ID {
+	for _, vertex := range g.Vertices {
+		if vertex.ID == ID {
 			// mean this vertex already exist.
-			return ver
+			return vertex
 		}
 	}
 
@@ -32,47 +35,34 @@ func (g *Graph) AddNewVertex(ID string) *Vertex {
 	}
 
 	g.Vertices = append(g.Vertices, v)
-	g.Vns = append(g.Vns, v.number)
+	g.conversionTable[v.number] = v.ID
 	return v
 }
 
-func (g *Graph) AddVertex(v *Vertex) *Vertex {
-	for _, ver := range g.Vertices {
-		if ver.ID == v.ID {
-			// mean this vertex already exist.
-			return ver
-		}
-	}
-	g.Vertices = append(g.Vertices, v)
-	g.Vns = append(g.Vns, v.number)
-	return v
-}
-
-func (g *Graph) GetVertex(ID string) *Vertex {
-	for _, ver := range g.Vertices {
-		if ver.ID == ID {
-			return ver
+func (g *Graph) getVertex(ID string) *Vertex {
+	for _, vertex := range g.Vertices {
+		if vertex.ID == ID {
+			return vertex
 		}
 	}
 	return nil
 }
 
-func (g *Graph) getVertexNumber(ID string) int {
-	for _, ver := range g.Vertices {
-		if ver.ID == ID {
-			return ver.number
-		}
-	}
-	return -1
-}
-
 func (g *Graph) AppendPath(src, dest string, distance int64) error {
-	n1 := g.GetVertex(src)
-	n2 := g.GetVertex(dest)
-	if n1.number == -1 || n2.number == -1 {
-		return errors.New("Please check your src or dest ID.")
+	if distance <= 0 {
+		return errors.New("Distance should > 0.")
 	}
 
-	n1.appendPath(n2.number, distance)
+	v1 := g.getVertex(src)
+	if v1 == nil {
+		return errors.New("src ID error, please check your source vertex ID.")
+	}
+
+	v2 := g.getVertex(dest)
+	if v2 == nil {
+		return errors.New("destination ID error, please check your destination ID.")
+	}
+
+	v1.appendPath(v2.number, distance)
 	return nil
 }
